@@ -1,0 +1,437 @@
+<!DOCTYPE HTML>
+<html lang="en"></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <title>AQUAPONICS MONITORING SYSTEM</title>
+  <style>
+      * {
+        margin: 0;
+        padding: 0;
+        font-family: sans-serif;
+    }
+        
+        .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .sensor-data {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    
+    .sensor-data h2 {
+      margin-top: 20px;
+    }
+    
+    .sensor-data p {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+    .chartContainer {
+      display:flex;
+      flex-direction: row;
+      justify-content: center;
+      height: 100%;
+    }
+    
+    .container1, .container2, .container3 {
+      width: 400px;
+      height: 200px;
+      margin: 10px;
+      border: 5px solid #07add6;
+      border-radius: 10px;
+    }
+    
+    footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: #00a8f7;
+      color: #fff;
+      text-align: center;
+      padding: 10px 0;
+    }
+
+
+html, body { height: 100%; }
+body {
+  background:radial-gradient(ellipse at center, rgba(255,254,234,1) 0%, rgba(255,254,234,1) 35%, #B7E8EB 100%);
+  overflow: hidden;
+}
+
+.ocean { 
+  height: 5%;
+  width:100%;
+  position:absolute;
+  bottom:0;
+  left:0;
+  background: #015871;
+}
+
+.wave {
+  background: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/85486/wave.svg) repeat-x; 
+  position: absolute;
+  top: -198px;
+  width: 6400px;
+  height: 198px;
+  animation: wave 7s cubic-bezier( 0.36, 0.45, 0.63, 0.53) infinite;
+  transform: translate3d(0, 0, 0);
+}
+
+.wave:nth-of-type(2) {
+  top: -175px;
+  animation: wave 7s cubic-bezier( 0.36, 0.45, 0.63, 0.53) -.125s infinite, swell 7s ease -1.25s infinite;
+  opacity: 1;
+}
+
+@keyframes wave {
+  0% {
+    margin-left: 0;
+  }
+  100% {
+    margin-left: -1600px;
+  }
+}
+
+@keyframes swell {
+  0%, 100% {
+    transform: translate3d(0,-25px,0);
+  }
+  50% {
+    transform: translate3d(0,5px,0);
+  }
+}
+    
+   
+ /* Style the links inside the navigation bar */
+ .topnav a {
+  float: left;
+  color: #000000;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+  font-weight: bold;
+  font-style: sans-serif;
+}
+
+/* Change the color of links on hover */
+.topnav a:hover {
+  background-color: #213b92;
+  color: rgb(231, 232, 237);
+}
+
+/* Add a color to the active/current link */
+.topnav a.active {
+  background-color: #00ffa2;
+  color: white;
+}
+nav {
+  background-color: #0bc57e;
+  overflow: hidden;
+}
+
+nav ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+nav li {
+  float: left;
+}
+
+nav a {
+  display: block;
+  color: rgb(255, 255, 255);
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+nav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+nav {
+  background-color: #0bc57e;
+  overflow: hidden;
+}
+
+nav ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+nav li {
+  float: left;
+}
+
+
+nav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+:root {
+  --scrollcolor: #fff;
+  --scrollbackground: #141e27;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+      
+#webcam-overlay {
+  
+  display: flex;
+  flex-direction:row;
+  margin-inline: 100;
+  margin: 10px;
+  justify-content: center;
+  
+}
+
+
+
+.webcamLabel1, .webcamLabel2 {
+  display: flex;
+  flex-direction: row;
+  margin: 10px;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #000;
+}
+
+
+
+
+  </style>
+</head>
+<body>
+  <div class="topnav">
+    <nav>
+      <ul>
+        <li><a href="index.html">Dashboard</a></li>
+        <li><a href="symtomsandtreatment.html">Symptoms and Treatments</a></li>
+        <li><a href="index.php">Sensor Table Readings</a></li>
+      </ul>
+    </nav>
+  </div>
+  <div id="background">
+  </div>
+  <div class="ocean">
+    <div class="wave"></div>
+    <div class="wave"></div>
+  </div>
+
+  <main>
+    <div class="chartContainer">
+      <div id="chart-temperature" class="container1"></div>
+      <div id="chart-pressure" class="container2"></div>
+      <div id="chart-tds" class="container3"></div>
+  </main>
+
+  <div id="webcam-overlay">
+    <div id="webcamContaine1">
+      <div id="video1Container">
+        <video id="video1" width="500" height="300" autoplay></video>
+        <p class="webcamLabel1" style="color: rgb(0, 0, 0);">Live feed of plants</p>
+      </div>
+    </div>
+
+
+    <div id="webcamContainer2">
+      <div id="video2Container">
+        <video id="video2" width="500" height="300" autoplay></video>
+        <p class="webcamLabel2" style="color: rgb(0, 0, 0);">Live feed of fish</p>
+      </div>
+    </div>
+  </div>
+
+
+    <script>
+const video1 = document.getElementById("video1");
+const video2 = document.getElementById("video2");
+
+// Use getUserMedia API to get access to the first webcam
+navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+.then(stream => {
+  video1.srcObject = stream;
+})
+.catch(error => {
+  console.error("Error accessing the first webcam: ", error);
+});
+
+// Use getUserMedia API to get access to the second webcam
+navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+.then(stream => {
+  video2.srcObject = stream;
+})
+.catch(error => {
+  console.error("Error accessing the second webcam: ", error);
+});
+
+
+</script>
+
+<script>
+
+  //GET SENSOR READINGS FROM ESP32
+
+  // TEMPERATURE 
+  var chartT = new Highcharts.Chart({
+  chart:{renderTo : 'chart-temperature' },
+  title: { text: 'DS18B20 Temperature' },
+  series: [{
+    showInLegend: false,
+    data: []
+  }],
+  plotOptions: {
+    line: { animation: false,
+      dataLabels: { enabled: true }
+    },
+    series: { color: '#059e8a' }
+  },
+  xAxis: { type: 'datetime',
+    dateTimeLabelFormats: { second: '%H:%M:%S' }
+  },
+  yAxis: {
+    title: { text: 'Temperature (Celsius)' }
+    //title: { text: 'Temperature (Fahrenheit)' }
+  },
+  credits: { enabled: false }
+});
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      console.log(this.responseText);
+      var response = JSON.parse(this.responseText);
+      var temperature = response.value1;
+      var x = (new Date()).getTime(),
+          y = parseFloat(temperature);
+      //console.log(this.responseText);
+      if(chartT.series[0].data.length > 40) {
+        chartT.series[0].addPoint([x, y], true, true, true);
+      } else {
+        chartT.series[0].addPoint([x, y], true, false, true);
+      }
+    }
+  };
+  xhttp.open("GET", "post-esp-data.php?sensor=value1", true);
+  xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+  xhttp.send();
+}, 1000 ) ;
+//PH level
+var chartP = new Highcharts.Chart({
+  chart:{ renderTo:'chart-pressure' },
+  title: { text: 'pH level' },
+  series: [{
+    showInLegend: false,
+    data: []
+  }],
+  plotOptions: {
+    line: { animation: false,
+      dataLabels: { enabled: true }
+    },
+    series: { color: '#18009c' }
+  },
+  xAxis: {
+    type: 'datetime',
+    dateTimeLabelFormats: { second: '%H:%M:%S' }
+  },
+  yAxis: {
+    title: { text: 'PH value' }
+  },
+  credits: { enabled: false }
+});
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      console.log(this.responseText);
+      var response = JSON.parse(this.responseText);
+      var pH = response.value2
+      var x = (new Date()).getTime(),
+          y = parseFloat(pH);
+      //console.log(this.responseText);
+      if(chartP.series[0].data.length > 40) {
+        chartP.series[0].addPoint([x, y], true, true, true);
+      } else {
+        chartP.series[0].addPoint([x, y], true, false, true);
+      }
+    }
+  };
+  xhttp.open("GET", "post-esp-data.php?sensor=value2", true);
+  xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+  xhttp.send();
+}, 1000 ) ;
+
+  //TDS
+  var chartTDS = new Highcharts.Chart({
+  chart:{ renderTo:'chart-tds' },
+  title: { text: 'TDS (TOTAL DISSOLVED SOLIDS) Level' },
+  series: [{
+    showInLegend: false,
+    data: []
+  }],
+  plotOptions: {
+    line: { animation: false,
+      dataLabels: { enabled: true }
+    },
+    series: { color: '#9c0018' }
+  },
+  xAxis: {
+    type: 'datetime',
+    dateTimeLabelFormats: { second: '%H:%M:%S' }
+  },
+  yAxis: {
+    title: { text: 'PPM' }
+  },
+  credits: { enabled: false }
+});
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      console.log(this.responseText);
+      var response = JSON.parse(this.responseText);
+      var tds = response.value3
+      var x = (new Date()).getTime(),
+          y = parseFloat(tds);
+      if(chartTDS.series[0].data.length > 40) {
+        chartTDS.series[0].addPoint([x, y], true, true, true);
+      } else {
+        chartTDS.series[0].addPoint([x, y], true, false, true);
+      }
+    }
+  };
+  xhttp.open("GET", "post-esp-data.php?sensor=value3", true);
+  xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+  xhttp.send();
+}, 1000 ) ;
+</script>
+
+
+<footer>
+  <p>THESIS ADVISER: ENGR. ROMNICK CARTUSIANO </p>
+</footer>
+</html
+
+
